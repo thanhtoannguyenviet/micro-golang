@@ -1,13 +1,13 @@
 package user
 
 type UserModel struct {
-	Id        string `bson:"uid"`
-	Email     string `bson:"email"`
-	FirstName string `bson:"first_name,omitempty"`
-	LastName  string `bson:"last_name,omitempty"`
-	Password  string `bson:"-"`
-	Salt      string `bson:"salt"`
-	IsActive  int64  `bson:"is_active"`
-	CreatedAt int64  `bson:"created_at"`
-	UpdatedAt int64  `bson:"updated_at"`
+	Id        string `json:"uid"`
+	Email     string `json:"email"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	Password  string `json:"password"`
+	Salt      string `json:"salt"`
+	IsActive  int64  `json:"is_active"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
 }
