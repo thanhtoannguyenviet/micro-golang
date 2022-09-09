@@ -39,23 +39,12 @@ func runServer() {
 	}
 	defer client.Disconnect(ctx)
 	r := gin.Default()
-	v1 := r.Group("/v1/auth")
-	v1.POST("regist", user.InsertUser(client))
+	auth := r.Group("v1/auth")
+	{
+		auth.POST("regist", user.InsertUser(client))
+		auth.GET("/:id", user.GetById(client))
+		auth.GET("", user.GetAll(client))
+		auth.PATCH("", user.UpdateUser(client))
+	}
 	r.Run()
-	//database, err := client.ListDatabases(ctx, bson.M{})
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//fmt.Println(database)
-	//collection := client.Database("micro-go").Collection("auth-user")
-	//cur, err := collection.Find(ctx, bson.D{})
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//defer cur.Close(ctx)
-	//var elems []user.UserModel
-	//if err = cur.All(ctx, &elems); err != nil {
-	//	log.Fatal(err)
-	//}
-	//fmt.Println(elems)
 }
