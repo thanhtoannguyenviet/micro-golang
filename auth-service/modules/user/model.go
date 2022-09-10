@@ -11,3 +11,8 @@ type UserModel struct {
 	CreatedAt int64  `bson:"created_at" json:"created_at"`
 	UpdatedAt int64  `bson:"updated_at" json:"updated_at"`
 }
+
+type UserLogin struct {
+	Email    string `json:"email" form:"email" bson:"email"`
+	Password string `json:"password" form:"password" bson:"password"`
+}

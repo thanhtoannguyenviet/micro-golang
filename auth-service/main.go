@@ -41,8 +41,9 @@ func runServer() {
 	r := gin.Default()
 	auth := r.Group("v1/auth")
 	{
-		auth.POST("regist", user.InsertUser(client))
-		auth.GET("/:id", user.GetById(client))
+		auth.POST("register", user.InsertUser(client))
+		auth.POST("login", user.Login(client))
+		auth.GET(":id", user.GetById(client))
 		auth.GET("", user.GetAll(client))
 		auth.PATCH("", user.UpdateUser(client))
 	}

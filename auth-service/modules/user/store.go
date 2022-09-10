@@ -67,3 +67,12 @@ func (s *sqlStore) Update(ctx context.Context, model *UserModel) error {
 	}
 	return nil
 }
+
+func (s *sqlStore) FindByEmail(ctx context.Context, email string) (*UserModel, error) {
+	var rs *UserModel
+	collection := s.db.Database("micro-go").Collection("auth-user")
+	if err := collection.FindOne(ctx, bson.M{"email": email}).Decode(&rs); err != nil {
+		return nil, err
+	}
+	return rs, nil
+}
