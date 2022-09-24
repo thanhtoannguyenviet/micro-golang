@@ -1,7 +1,8 @@
 package user
 
 import (
-	"auth/modules/hash"
+	"auth/modules/helper"
+	"auth/modules/token"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
@@ -13,8 +14,8 @@ func InsertUser(db *mongo.Client) gin.HandlerFunc {
 		if err := c.ShouldBind(&data); err != nil {
 			panic(err)
 		}
-		data.Salt = hash.GenerateRandomSalt()
-		data.Password = hash.HashPassword(data.Password, data.Salt)
+		data.Salt = helper.GenerateRandomSalt()
+		data.Password = helper.HashPassword(data.Password, data.Salt)
 		store := NewSQLStore(db)
 		if err := store.Insert(c.Request.Context(), &data); err != nil {
 			panic(err)
@@ -61,6 +62,7 @@ func GetById(db *mongo.Client) gin.HandlerFunc {
 }
 func Login(db *mongo.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		secret := "JWTSECRET"
 		var data *UserLogin
 		if err := c.ShouldBind(&data); err != nil {
 			panic(err)
@@ -71,7 +73,20 @@ func Login(db *mongo.Client) gin.HandlerFunc {
 			panic(err)
 		}
 		//Check password
-		checkPassword := hash.ConstainsPassword(res.Password, data.Password, res.Salt)
+		checkPassword := helper.ConstainsPassword(res.Password, data.Password, res.Salt)
+		if checkPassword == true {
+			store := token.NewTokenJWTProvider(secret)
+			var token token.TokenPayload
+			token.Role = "Admin"
+			token.UserId = res.Id
+			rs, err := store.Generate(token, 200000)
+			if err != nil {
+				c.JSON(http.StatusBadRequest, err)
+			} else {
+				c.JSON(http.StatusOK, rs)
+			}
+		}
+
 		c.JSON(http.StatusOK, checkPassword)
 
 	}
